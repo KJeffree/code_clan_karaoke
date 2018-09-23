@@ -88,7 +88,3 @@ decision = gets.chomp
 end
 
 room_choice.check_out_guest(guest1, bar)
-
-
-binding.pry
-nil
