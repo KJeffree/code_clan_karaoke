@@ -20,4 +20,13 @@ class Guest
   def cheer
     return "Whoooo!"
   end
+
+  def buys_drink(bar, drink)
+    for drinks in bar
+      if drinks[:name] == drink
+        @wallet -= drinks[:price]
+      end
+    end
+  end
+
 end

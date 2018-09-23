@@ -1,7 +1,9 @@
+require('pry')
+
 class Room
 
   attr_reader :name, :fee
-  attr_accessor :till, :capacity, :songs, :guests
+  attr_accessor :till, :capacity, :songs, :guests, :tabs
 
   def initialize(name, fee)
     @name = name
@@ -10,6 +12,7 @@ class Room
     @songs = []
     @fee = fee
     @guests = []
+    @tabs = []
   end
 
   def check_in_guest(guest)
@@ -23,7 +26,14 @@ class Room
     end
   end
 
-  def check_out_guest(guest)
+  def check_out_guest(guest, bar)
+    for tab in @tabs
+      if tab[:name] == guest.name
+        guest.wallet -= tab[:spent]
+        bar.total_income += tab[:spent]
+        @tabs.delete(tab)
+      end
+    end
     @capacity += 1
     @guests.delete(guest)
   end
@@ -39,17 +49,31 @@ class Room
   end
 
   def play_song_in_room(requested_song)
-    for song in @songs
-      if song == requested_song
-        song.play_song
-      end
-    end
     for guest in @guests
-      if guest.fav_song == requested_song
-        guest.cheer
+      if guest.fav_song == requested_song.title
+        return guest.cheer
       end
     end
+    return requested_song.play_song
   end
 
+  def set_tab_for_customer(customer, bar)
+    for guest in @guests
+      if guest.name == customer.name
+       @tabs << {name: customer.name, spent: 0}
+     end
+   end
+   return "This customer has not checked in"
+  end
+
+  def add_drink_to_tab(customer, drink, bar)
+    for guest in @tabs
+      if guest[:name] == customer.name
+        return guest[:spent] += drink[:price]
+      end
+    end
+    customer.buys_drink(bar.drinks, drink[:name])
+    bar.sell_drink(drink[:name])
+  end
 
 end
