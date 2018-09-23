@@ -66,6 +66,28 @@ if tab == "yes"
   room_choice.set_tab_for_customer(guest1, bar)
 else
   p "Ok, please pay for your drinks as you order them"
+end
+
+p "Would you like to order a drink? We have wine, beer, cider and fruit juice"
+drink_choice = gets.chomp
+
+room_choice.add_drink_to_tab(guest1, drink_choice, bar)
+
+while true
+p "Would you like to order another drink or would you like to check out?"
+decision = gets.chomp
+  if decision == "check out"
+    break
+  elsif decision == "another drink"
+    p "which drink would you like?"
+    drink_choice = gets.chomp
+    room_choice.add_drink_to_tab(guest1, drink_choice, bar)
+  else
+    p "Sorry, I didn't catch that.. please enter 'another drink' or 'check out' to continue"
+  end
+end
+
+room_choice.check_out_guest(guest1, bar)
 
 
 binding.pry

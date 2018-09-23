@@ -67,13 +67,23 @@ class Room
   end
 
   def add_drink_to_tab(customer, drink, bar)
+    to_charge = price_of_drink(drink, bar)
     for guest in @tabs
       if guest[:name] == customer.name
-        return guest[:spent] += drink[:price]
+        return guest[:spent] += to_charge
       end
     end
-    customer.buys_drink(bar.drinks, drink[:name])
-    bar.sell_drink(drink[:name])
+    customer.buys_drink(bar.drinks, drink)
+    bar.sell_drink(drink)
+  end
+
+  def price_of_drink(drink, bar)
+    for item in bar.drinks
+      if item[:name] == drink
+        return item[:price]
+      end
+    end
+    return "That drink does not exist"
   end
 
 end

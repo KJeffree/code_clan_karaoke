@@ -121,14 +121,14 @@ class TestRooms < MiniTest::Test
   def test_add_drink_to_tab
     @room1.check_in_guest(@guest1)
     @room1.set_tab_for_customer(@guest1, @bar)
-    @room1.add_drink_to_tab(@guest1, @bar.drinks[0], @bar)
+    @room1.add_drink_to_tab(@guest1, "wine", @bar)
     assert_equal(4, @room1.tabs[0][:spent])
     assert_equal(25, @guest1.wallet)
   end
 
   def test_sell_drink_if_no_tab
     @room1.check_in_guest(@guest1)
-    result = @room1.add_drink_to_tab(@guest1, @bar.drinks[1], @bar)
+    result = @room1.add_drink_to_tab(@guest1, "beer", @bar)
     assert_equal(22, @guest1.wallet)
     assert_equal(3, @bar.total_income)
   end
@@ -136,13 +136,24 @@ class TestRooms < MiniTest::Test
   def test_if_customer_pays_tab_when_they_check_out
     @room1.check_in_guest(@guest1)
     @room1.set_tab_for_customer(@guest1, @bar)
-    @room1.add_drink_to_tab(@guest1, @bar.drinks[0], @bar)
-    @room1.add_drink_to_tab(@guest1, @bar.drinks[1], @bar)
-    @room1.add_drink_to_tab(@guest1, @bar.drinks[2], @bar)
+    @room1.add_drink_to_tab(@guest1, "wine", @bar)
+    @room1.add_drink_to_tab(@guest1, "beer", @bar)
+    @room1.add_drink_to_tab(@guest1, "cider", @bar)
     @room1.check_out_guest(@guest1, @bar)
     assert_equal(15, @guest1.wallet)
     assert_equal(10, @bar.total_income)
     assert_equal(5, @room1.till)
     assert_equal(0, @room1.tabs.length)
   end
+
+  def test_find_price_of_drink_by_name__drink_exists
+    result = @room1.price_of_drink("wine", @bar)
+    assert_equal(4, result)
+  end
+
+  def test_find_price_of_drink_by_name__does_not_exist
+    result = @room1.price_of_drink("cocktail", @bar)
+    assert_equal("That drink does not exist", result)
+  end
+
 end
